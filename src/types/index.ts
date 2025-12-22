@@ -40,20 +40,33 @@ export interface BaselineComparison {
 
 export interface RawEvent {
   timestamp?: string;
+  occurredAt?: string;
   user?: string;
   userId?: string;
   actor?: string;
+  actorId?: string;
+  actorType?: string;
   action?: string;
+  actionType?: string;
   type?: string;
   resource?: string;
+  resourceType?: string;
   resourceId?: string;
   ip?: string;
+  ipAddress?: string;
   userAgent?: string;
   bytes?: number;
+  bytesTransferred?: number;
   success?: boolean;
   outcome?: string;
   [key: string]: unknown;
 }
+
+// Re-export normalization types
+export type {
+  NormalizedEvent,
+  NormalizationResult,
+} from "@/lib/normalization";
 
 export interface IngestResult {
   success: boolean;

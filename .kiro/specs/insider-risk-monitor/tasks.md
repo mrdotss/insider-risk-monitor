@@ -32,24 +32,24 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
     - _Requirements: 13.1, 13.2, 13.3_
 
 - [ ] 2. Core Business Logic - Ingestion
-  - [ ] 2.1 Implement Source management
+  - [x] 2.1 Implement Source management
     - Create Source service with CRUD operations
     - Implement API key generation and hashing (bcrypt)
     - Create rate limiting logic (in-memory for MVP)
     - _Requirements: 1.6, 11.2, 11.3_
 
-  - [ ] 2.2 Implement Normalization Engine
+  - [x] 2.2 Implement Normalization Engine
     - Create normalizeEvent function mapping raw → Event schema
     - Handle optional fields (ip, userAgent, bytes)
     - Implement resourceId hashing for redaction
     - Preserve raw fields in metadata JSONB
     - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
-  - [ ] 2.3 Write property test for Normalization round-trip
+  - [x] 2.3 Write property test for Normalization round-trip
     - **Property 4: Normalization Round-Trip**
     - **Validates: Requirements 2.1, 2.3, 2.4, 2.5**
 
-  - [ ] 2.4 Implement Ingestion API endpoint
+  - [x] 2.4 Implement Ingestion API endpoint
     - Create POST /api/ingest/[sourceKey]/route.ts
     - Validate API key from x-api-key header
     - Check rate limit
@@ -57,7 +57,7 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
     - Normalize and persist event
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-  - [ ] 2.5 Write property tests for Ingestion
+  - [x] 2.5 Write property tests for Ingestion
     - **Property 1: Valid Ingestion Produces Stored Event**
     - **Property 2: Invalid Authentication Rejects Request**
     - **Property 3: Invalid Payload Returns Validation Error**
