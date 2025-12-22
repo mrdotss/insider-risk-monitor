@@ -7,24 +7,24 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
 ## Tasks
 
 - [ ] 1. Project Setup and Infrastructure
-  - [ ] 1.1 Initialize Next.js project with TypeScript and App Router
+  - [x] 1.1 Initialize Next.js project with TypeScript and App Router
     - Run `npx create-next-app@latest` with TypeScript, Tailwind, App Router
     - Configure tsconfig.json for strict mode
     - _Requirements: 14.1_
 
-  - [ ] 1.2 Set up Prisma with Neon PostgreSQL
+  - [x] 1.2 Set up Prisma with Neon PostgreSQL
     - Install prisma and @prisma/client
     - Configure prisma/schema.prisma with Neon connection
     - Create all database models (Source, Event, Actor, Baseline, RiskScore, Alert, ScoringRule, SystemSetting, AuditLog, User)
     - Run initial migration
     - _Requirements: 2.1, 14.2_
 
-  - [ ] 1.3 Set up shadcn/ui and Tailwind
+  - [x] 1.3 Set up shadcn/ui and Tailwind
     - Initialize shadcn/ui with default config
     - Add core components: Button, Card, Table, Input, Select, Badge, Dialog, Tabs
     - _Requirements: 6.1_
 
-  - [ ] 1.4 Set up authentication with NextAuth
+  - [x] 1.4 Set up authentication with NextAuth
     - Install next-auth
     - Configure credentials provider
     - Create login page and auth middleware

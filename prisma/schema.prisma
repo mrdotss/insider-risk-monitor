@@ -1,0 +1,209 @@
+// Prisma schema for Insider Risk Monitor
+// Database: Neon PostgreSQL (serverless)
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum ActorType {
+  employee
+  service
+}
+
+enum Outcome {
+  success
+  failure
+}
+
+enum Severity {
+  low
+  medium
+  high
+  critical
+}
+
+enum AlertStatus {
+  open
+  acknowledged
+  resolved
+  false_positive
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+// Sources - Event origins with API keys
+model Source {
+  id               String   @id @default(uuid())
+  key              String   @unique // e.g., "vpn", "iam", "app"
+  name             String
+  description      String?
+  apiKeyHash       String   // Hashed API key (bcrypt)
+  enabled          Boolean  @default(true)
+  redactResourceId Boolean  @default(false)
+  retentionDays    Int      @default(90)
+  rateLimit        Int      @default(1000) // requests per minute
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  events Event[]
+}
+
+// Events - Normalized security telemetry
+model Event {
+  id           String    @id @default(uuid())
+  occurredAt   DateTime
+  ingestedAt   DateTime  @default(now())
+  actorId      String
+  actorType    ActorType @default(employee)
+  sourceId     String
+  source       Source    @relation(fields: [sourceId], references: [id])
+  actionType   String
+  resourceType String?
+  resourceId   String?
+  outcome      Outcome   @default(success)
+  ip           String?
+  userAgent    String?
+  bytes        Int?
+  metadata     Json      @default("{}")
+
+  @@index([actorId])
+  @@index([occurredAt])
+  @@index([sourceId])
+  @@index([actorId, occurredAt])
+}
+
+
+// Actors - Cached actor information
+model Actor {
+  id               String    @id @default(uuid())
+  actorId          String    @unique // External identifier
+  displayName      String?
+  actorType        ActorType @default(employee)
+  firstSeen        DateTime
+  lastSeen         DateTime
+  currentRiskScore Int       @default(0)
+
+  baselines  Baseline[]
+  alerts     Alert[]
+  riskScores RiskScore[]
+}
+
+// Baselines - Rolling behavioral profiles
+model Baseline {
+  id                   String   @id @default(uuid())
+  actorId              String
+  actor                Actor    @relation(fields: [actorId], references: [actorId])
+  computedAt           DateTime @default(now())
+  windowDays           Int      @default(14)
+  typicalActiveHours   Json     // number[] - hours (0-23) when typically active
+  knownIpAddresses     Json     // string[] - IPs seen in baseline period
+  knownUserAgents      Json     // string[] - User agents seen
+  avgBytesPerDay       Float    @default(0)
+  avgEventsPerDay      Float    @default(0)
+  typicalResourceScope Int      @default(0)
+  normalFailureRate    Float    @default(0)
+  eventCount           Int      @default(0)
+
+  @@index([actorId])
+  @@index([computedAt])
+}
+
+// Risk Scores - Historical scoring records
+model RiskScore {
+  id                 String   @id @default(uuid())
+  actorId            String
+  actor              Actor    @relation(fields: [actorId], references: [actorId])
+  totalScore         Int
+  computedAt         DateTime @default(now())
+  ruleContributions  Json     // RuleContribution[]
+  baselineId         String?
+  triggeringEventIds Json     // string[]
+
+  @@index([actorId])
+  @@index([computedAt])
+}
+
+// Alerts - Generated risk alerts
+model Alert {
+  id                 String      @id @default(uuid())
+  actorId            String
+  actor              Actor       @relation(fields: [actorId], references: [actorId])
+  severity           Severity
+  status             AlertStatus @default(open)
+  score              Int
+  ruleContributions  Json        // RuleContribution[]
+  baselineComparison Json        // BaselineComparison
+  triggeringEventIds Json        // string[]
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  acknowledgedBy     String?
+  acknowledgedAt     DateTime?
+  resolvedBy         String?
+  resolvedAt         DateTime?
+
+  @@index([actorId])
+  @@index([status])
+  @@index([severity])
+  @@index([createdAt])
+}
+
+
+// Scoring Rules - Configurable detection rules
+model ScoringRule {
+  id            String   @id @default(uuid())
+  ruleKey       String   @unique // off_hours, new_ip, volume_spike, scope_expansion, failure_burst
+  name          String
+  description   String
+  enabled       Boolean  @default(true)
+  weight        Int      @default(10)
+  threshold     Float    @default(1)
+  windowMinutes Int      @default(60)
+  config        Json     @default("{}") // Rule-specific config
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// System Settings - Global configuration
+model SystemSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+// Audit Log - Track admin changes
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String
+  action      String   // rule_updated, source_created, etc.
+  entityType  String   // ScoringRule, Source, etc.
+  entityId    String
+  beforeValue Json?
+  afterValue  Json?
+  createdAt   DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+// Admin Users
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
