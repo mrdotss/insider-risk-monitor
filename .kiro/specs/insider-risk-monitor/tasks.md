@@ -68,7 +68,7 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
   - Test with curl command
   - Ask the user if questions arise
 
-- [ ] 4. Core Business Logic - Baselines and Scoring
+- [x] 4. Core Business Logic - Baselines and Scoring
   - [x] 4.1 Implement Baseline Engine
     - Create computeBaseline function for single actor
     - Compute: typical hours, known IPs, avg bytes, resource scope, failure rate
@@ -103,20 +103,20 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
     - **Property 9: Scoring Determinism**
     - **Validates: Requirements 4.1, 4.3, 4.4, 4.6**
 
-- [ ] 5. Core Business Logic - Alerting
-  - [ ] 5.1 Implement Alert Generation
+- [x] 5. Core Business Logic - Alerting
+  - [x] 5.1 Implement Alert Generation
     - Create evaluateAndAlert function
     - Check score against threshold
     - Assign severity based on score ranges
     - Create Alert with all required fields
     - _Requirements: 5.1, 5.2, 5.4_
 
-  - [ ] 5.2 Implement Alert Deduplication
+  - [x] 5.2 Implement Alert Deduplication
     - Check for existing open alert for actor within window
     - Skip creation if duplicate found
     - _Requirements: 5.3_
 
-  - [ ] 5.3 Write property tests for Alerting
+  - [x] 5.3 Write property tests for Alerting
     - **Property 10: Alert Generation Threshold**
     - **Property 11: Alert Completeness**
     - **Property 12: Alert Severity Mapping**

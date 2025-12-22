@@ -93,3 +93,10 @@ export type {
   RiskScoreResult,
   ScoringOptions,
 } from "@/lib/scoring";
+
+// Re-export alerting types
+export type {
+  AlertEvaluationResult,
+  AlertOptions,
+  AlertData,
+} from "@/lib/alerting";
