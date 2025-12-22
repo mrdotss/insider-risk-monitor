@@ -203,7 +203,7 @@ export default async function OverviewPage() {
               </CardDescription>
             </div>
             <Link href="/actors?sortBy=currentRiskScore&sortOrder=desc">
-              <Button variant="ghost" size="sm">View All →</Button>
+              <Button variant="outline" size="sm">View All →</Button>
             </Link>
           </CardHeader>
           <CardContent>

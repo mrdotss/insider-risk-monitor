@@ -347,7 +347,7 @@ function AlertsPageContent() {
                       </TableCell>
                       <TableCell>
                         <Link href={`/alerts/${alert.id}`}>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="outline" size="sm">
                             View →
                           </Button>
                         </Link>

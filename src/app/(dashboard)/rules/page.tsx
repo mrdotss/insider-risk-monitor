@@ -311,7 +311,7 @@ export default function RulesPage() {
                           </div>
                         ) : (
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                             onClick={() => handleStartEdit(rule)}
                             disabled={isSaving}

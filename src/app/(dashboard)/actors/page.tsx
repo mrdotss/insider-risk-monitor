@@ -241,7 +241,7 @@ function ActorsPageContent() {
                       </TableCell>
                       <TableCell>
                         <Link href={`/actors/${encodeURIComponent(actor.actorId)}`}>
-                          <Button variant="ghost" size="sm">
+                          <Button variant="outline" size="sm">
                             View →
                           </Button>
                         </Link>

@@ -1,0 +1,146 @@
+# ============================================
+# Insider Risk Monitor - Docker Compose
+# ============================================
+# Services:
+#   - web: Next.js application (dashboard + API)
+#   - worker: Background job processor
+#   - redis: Rate limiting cache
+# ============================================
+# Usage:
+#   docker compose up              # Start all services
+#   docker compose up -d           # Start in detached mode
+#   docker compose down            # Stop all services
+#   docker compose logs -f web     # Follow web logs
+#   docker compose logs -f worker  # Follow worker logs
+# ============================================
+
+services:
+  # ============================================
+  # Web Service - Next.js Application
+  # ============================================
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: insider-risk-web
+    ports:
+      - "3000:3000"
+    environment:
+      # Database connection (Neon PostgreSQL)
+      - DATABASE_URL=${DATABASE_URL}
+      # Authentication
+      - AUTH_SECRET=${AUTH_SECRET}
+      - AUTH_URL=http://localhost:3000
+      # Admin credentials
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@example.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-change-this-password}
+      - ADMIN_NAME=${ADMIN_NAME:-Admin User}
+      # Redis for rate limiting
+      - REDIS_URL=redis://redis:6379
+      # Data retention
+      - DATA_RETENTION_DAYS=${DATA_RETENTION_DAYS:-90}
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - insider-risk-network
+
+  # ============================================
+  # Worker Service - Background Jobs
+  # ============================================
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: insider-risk-worker
+    # Override the default command to run the worker
+    command: ["node", "-r", "tsx/cjs", "worker/index.ts"]
+    environment:
+      # Database connection (Neon PostgreSQL)
+      - DATABASE_URL=${DATABASE_URL}
+      # Redis for rate limiting
+      - REDIS_URL=redis://redis:6379
+      # Worker configuration
+      - BASELINE_INTERVAL_MS=${BASELINE_INTERVAL_MS:-300000}
+      - SCORING_INTERVAL_MS=${SCORING_INTERVAL_MS:-300000}
+      - RETENTION_INTERVAL_MS=${RETENTION_INTERVAL_MS:-86400000}
+      - ALERT_THRESHOLD=${ALERT_THRESHOLD:-60}
+      - SCORING_WINDOW_MINUTES=${SCORING_WINDOW_MINUTES:-60}
+      - DEFAULT_RETENTION_DAYS=${DATA_RETENTION_DAYS:-90}
+    depends_on:
+      redis:
+        condition: service_healthy
+      web:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - insider-risk-network
+
+  # ============================================
+  # Redis Service - Rate Limiting Cache
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: insider-risk-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - insider-risk-network
+
+  # ============================================
+  # Database Migration Service (runs once)
+  # ============================================
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: insider-risk-migrate
+    # Run Prisma migrations and seed
+    command: >
+      sh -c "
+        echo 'Running database migrations...' &&
+        npx prisma db push --skip-generate &&
+        echo 'Seeding database...' &&
+        npx tsx prisma/seed.ts &&
+        echo 'Migration and seeding complete!'
+      "
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@example.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-change-this-password}
+      - ADMIN_NAME=${ADMIN_NAME:-Admin User}
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: "no"
+    networks:
+      - insider-risk-network
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  insider-risk-network:
+    driver: bridge
+
+# ============================================
+# Volumes
+# ============================================
+volumes:
+  redis-data:
+    driver: local

@@ -236,13 +236,13 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
     - Ensure at least 2 alerts are generated
     - _Requirements: 14.3, 14.4_
 
-- [ ] 14. Docker and Deployment
-  - [ ] 14.1 Create Dockerfile
+- [x] 14. Docker and Deployment
+  - [x] 14.1 Create Dockerfile
     - Multi-stage build for Next.js
     - Include Prisma client generation
     - _Requirements: 14.1_
 
-  - [ ] 14.2 Create docker-compose.yml
+  - [x] 14.2 Create docker-compose.yml
     - Web service (Next.js app)
     - Worker service (background jobs)
     - Redis service (for rate limiting cache)
@@ -250,7 +250,7 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
     - Auto-run migrations on startup
     - _Requirements: 14.1, 14.2_
 
-  - [ ] 14.3 Create README with documentation
+  - [x] 14.3 Create README with documentation
     - Setup instructions
     - Ingestion examples (curl commands)
     - Demo workflow steps

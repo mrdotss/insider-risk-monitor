@@ -352,7 +352,7 @@ export default function SourcesPage() {
                     <TableCell>
                       <div className="flex gap-2">
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
                           onClick={() => handleStartEdit(source)}
                           disabled={saving === source.id}
@@ -360,7 +360,7 @@ export default function SourcesPage() {
                           Edit
                         </Button>
                         <Button
-                          variant="ghost"
+                          variant={source.enabled ? "secondary" : "default"}
                           size="sm"
                           onClick={() => handleToggleEnabled(source)}
                           disabled={saving === source.id}

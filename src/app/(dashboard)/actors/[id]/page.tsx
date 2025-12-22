@@ -171,7 +171,7 @@ export default function ActorDetailPage({ params }: { params: Promise<{ id: stri
     return (
       <div className="space-y-4">
         <Link href="/actors">
-          <Button variant="ghost" size="sm">← Back to Actors</Button>
+          <Button variant="outline" size="sm">← Back to Actors</Button>
         </Link>
         <Card>
           <CardContent className="py-8">
@@ -190,7 +190,7 @@ export default function ActorDetailPage({ params }: { params: Promise<{ id: stri
       <div className="flex items-center justify-between">
         <div>
           <Link href="/actors">
-            <Button variant="ghost" size="sm" className="mb-2">← Back to Actors</Button>
+            <Button variant="outline" size="sm" className="mb-2">← Back to Actors</Button>
           </Link>
           <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
             {actor.displayName || actor.actorId}
@@ -471,7 +471,7 @@ export default function ActorDetailPage({ params }: { params: Promise<{ id: stri
                         </TableCell>
                         <TableCell>
                           <Link href={`/alerts/${alert.id}`}>
-                            <Button variant="ghost" size="sm">View →</Button>
+                            <Button variant="outline" size="sm">View →</Button>
                           </Link>
                         </TableCell>
                       </TableRow>
