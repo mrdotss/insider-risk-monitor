@@ -256,8 +256,8 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
     - Demo workflow steps
     - _Requirements: 14.5_
 
-- [ ] 15. Integration Test
-  - [ ] 15.1 Write integration test for ingest → alert flow
+- [x] 15. Integration Test
+  - [x] 15.1 Write integration test for ingest → alert flow
     - Send events via API
     - Trigger scoring run
     - Verify alert created
