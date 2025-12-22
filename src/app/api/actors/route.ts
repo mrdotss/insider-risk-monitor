@@ -8,6 +8,7 @@ export async function GET(request: NextRequest) {
     const pageSize = parseInt(searchParams.get("pageSize") || "20");
     const sortBy = searchParams.get("sortBy") || "currentRiskScore";
     const sortOrder = searchParams.get("sortOrder") || "desc";
+    const search = searchParams.get("search") || "";
 
     const skip = (page - 1) * pageSize;
 
@@ -19,8 +20,19 @@ export async function GET(request: NextRequest) {
       orderBy.currentRiskScore = "desc";
     }
 
+    // Build where clause for search
+    const where = search
+      ? {
+          OR: [
+            { actorId: { contains: search, mode: "insensitive" as const } },
+            { displayName: { contains: search, mode: "insensitive" as const } },
+          ],
+        }
+      : {};
+
     const [actors, total] = await Promise.all([
       prisma.actor.findMany({
+        where,
         skip,
         take: pageSize,
         orderBy,
@@ -34,7 +46,7 @@ export async function GET(request: NextRequest) {
           firstSeen: true,
         },
       }),
-      prisma.actor.count(),
+      prisma.actor.count({ where }),
     ]);
 
     return NextResponse.json({

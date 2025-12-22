@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 async function getOverviewData() {
@@ -47,6 +48,13 @@ async function getOverviewData() {
     },
   });
 
+  // Get open alerts count
+  const openAlerts = await prisma.alert.count({
+    where: {
+      status: "open",
+    },
+  });
+
   // Get alerts per day for the last 7 days
   const alertTrend = await getAlertTrend(sevenDaysAgo);
 
@@ -55,6 +63,7 @@ async function getOverviewData() {
     highRiskActors,
     eventsToday,
     activeSources,
+    openAlerts,
     alertTrend,
   };
 }
@@ -111,13 +120,25 @@ export default async function OverviewPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-          Overview
-        </h2>
-        <p className="text-zinc-600 dark:text-zinc-400">
-          Security risk monitoring dashboard
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+            Overview
+          </h2>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            Security risk monitoring dashboard
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Link href="/alerts?status=open">
+            <Button variant={data.openAlerts > 0 ? "destructive" : "outline"}>
+              {data.openAlerts > 0 ? `${data.openAlerts} Open Alerts` : "No Open Alerts"}
+            </Button>
+          </Link>
+          <Link href="/sources">
+            <Button variant="outline">Manage Sources</Button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -174,11 +195,16 @@ export default async function OverviewPage() {
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
-          <CardHeader>
-            <CardTitle>High Risk Actors</CardTitle>
-            <CardDescription>
-              Actors with risk scores above threshold
-            </CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <div>
+              <CardTitle>High Risk Actors</CardTitle>
+              <CardDescription>
+                Actors with risk scores above threshold
+              </CardDescription>
+            </div>
+            <Link href="/actors?sortBy=currentRiskScore&sortOrder=desc">
+              <Button variant="ghost" size="sm">View All →</Button>
+            </Link>
           </CardHeader>
           <CardContent>
             {data.highRiskActors.length === 0 ? (

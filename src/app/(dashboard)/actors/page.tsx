@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -61,10 +62,12 @@ function ActorsPageContent() {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const page = parseInt(searchParams.get("page") || "1");
   const sortBy = searchParams.get("sortBy") || "currentRiskScore";
   const sortOrder = searchParams.get("sortOrder") || "desc";
+  const search = searchParams.get("search") || "";
 
   const fetchActors = useCallback(async () => {
     setLoading(true);
@@ -74,6 +77,7 @@ function ActorsPageContent() {
       params.set("pageSize", "20");
       params.set("sortBy", sortBy);
       params.set("sortOrder", sortOrder);
+      if (search) params.set("search", search);
 
       const response = await fetch(`/api/actors?${params.toString()}`);
       if (response.ok) {
@@ -87,11 +91,12 @@ function ActorsPageContent() {
     } finally {
       setLoading(false);
     }
-  }, [page, sortBy, sortOrder]);
+  }, [page, sortBy, sortOrder, search]);
 
   useEffect(() => {
     fetchActors();
-  }, [fetchActors]);
+    setSearchQuery(search);
+  }, [fetchActors, search]);
 
   const updateParams = (updates: Record<string, string>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -116,6 +121,16 @@ function ActorsPageContent() {
     }
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateParams({ search: searchQuery });
+  };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+    updateParams({ search: "" });
+  };
+
   const getSortIndicator = (column: string) => {
     if (sortBy !== column) return null;
     return sortOrder === "desc" ? " ↓" : " ↑";
@@ -123,12 +138,41 @@ function ActorsPageContent() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Actors</h2>
-        <p className="text-zinc-600 dark:text-zinc-400">
-          View all actors and their current risk levels
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Actors</h2>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            View all actors and their current risk levels
+          </p>
+        </div>
+        <Button 
+          variant="outline" 
+          onClick={() => fetchActors()}
+          disabled={loading}
+        >
+          {loading ? "Refreshing..." : "Refresh"}
+        </Button>
       </div>
+
+      {/* Search Bar */}
+      <Card>
+        <CardContent className="pt-6">
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <Input
+              placeholder="Search by actor ID or name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="max-w-md"
+            />
+            <Button type="submit" variant="secondary">Search</Button>
+            {search && (
+              <Button type="button" variant="ghost" onClick={clearSearch}>
+                Clear
+              </Button>
+            )}
+          </form>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

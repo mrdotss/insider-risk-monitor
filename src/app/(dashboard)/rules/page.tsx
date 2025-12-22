@@ -158,11 +158,20 @@ export default function RulesPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Rules Configuration</h2>
-        <p className="text-zinc-600 dark:text-zinc-400">
-          Configure scoring rules, thresholds, and weights
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Rules Configuration</h2>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            Configure scoring rules, thresholds, and weights
+          </p>
+        </div>
+        <Button 
+          variant="outline" 
+          onClick={() => fetchRules()}
+          disabled={loading}
+        >
+          {loading ? "Refreshing..." : "Refresh"}
+        </Button>
       </div>
 
       {error && (

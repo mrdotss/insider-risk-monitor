@@ -469,6 +469,18 @@ export default function AlertDetailPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Bottom Navigation */}
+      <div className="flex items-center justify-between pt-4 border-t">
+        <Button variant="outline" onClick={() => router.push("/alerts")}>
+          ← Back to Alerts
+        </Button>
+        <div className="flex gap-2">
+          <Link href={`/actors/${encodeURIComponent(alert.actorId)}`}>
+            <Button variant="outline">View Actor Profile</Button>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

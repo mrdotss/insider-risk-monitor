@@ -221,15 +221,15 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
   - Test navigation and data display
   - Ask the user if questions arise
 
-- [ ] 13. Seed Data and Demo
-  - [ ] 13.1 Create Seed Script
+- [x] 13. Seed Data and Demo
+  - [x] 13.1 Create Seed Script
     - Create prisma/seed.ts
     - Seed default scoring rules with weights
     - Seed 3 sources (vpn, iam, app)
     - Seed admin user
     - _Requirements: 14.3_
 
-  - [ ] 13.2 Create Demo Data Generator
+  - [x] 13.2 Create Demo Data Generator
     - Create scripts/generate-demo-data.ts
     - Generate 3 actors with normal behavior patterns
     - Generate 1 anomalous actor triggering multiple rules

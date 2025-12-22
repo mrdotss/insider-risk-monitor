@@ -159,11 +159,20 @@ function AlertsPageContent() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Alerts</h2>
-        <p className="text-zinc-600 dark:text-zinc-400">
-          Browse and filter security alerts
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">Alerts</h2>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            Browse and filter security alerts
+          </p>
+        </div>
+        <Button 
+          variant="outline" 
+          onClick={() => fetchAlerts()}
+          disabled={loading}
+        >
+          {loading ? "Refreshing..." : "Refresh"}
+        </Button>
       </div>
 
       <Card>
@@ -277,8 +286,25 @@ function AlertsPageContent() {
               <p className="text-zinc-500">Loading alerts...</p>
             </div>
           ) : alerts.length === 0 ? (
-            <div className="flex items-center justify-center py-8">
-              <p className="text-zinc-500">No alerts found</p>
+            <div className="flex flex-col items-center justify-center py-12 gap-4">
+              <div className="rounded-full bg-zinc-100 p-4 dark:bg-zinc-800">
+                <svg className="h-8 w-8 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="text-center">
+                <p className="text-zinc-900 dark:text-zinc-50 font-medium">No alerts found</p>
+                <p className="text-sm text-zinc-500 mt-1">
+                  {severity !== "all" || status !== "all" || sourceId !== "all" || dateFrom || dateTo
+                    ? "Try adjusting your filters to see more results"
+                    : "Great news! There are no security alerts at this time"}
+                </p>
+              </div>
+              {(severity !== "all" || status !== "all" || sourceId !== "all" || dateFrom || dateTo) && (
+                <Button variant="outline" onClick={() => router.push("/alerts")}>
+                  Clear All Filters
+                </Button>
+              )}
             </div>
           ) : (
             <>
