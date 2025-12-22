@@ -16,6 +16,7 @@
     "db:studio": "prisma studio",
     "db:seed": "npx tsx prisma/seed.ts",
     "seed": "npx tsx prisma/seed.ts",
+    "worker": "npx tsx worker/index.ts",
     "postinstall": "prisma generate"
   },
   "prisma": {

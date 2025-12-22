@@ -123,26 +123,26 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
     - **Property 13: Alert Deduplication**
     - **Validates: Requirements 5.1, 5.2, 5.3, 5.4**
 
-- [ ] 6. Checkpoint - Scoring Pipeline Working
+- [x] 6. Checkpoint - Scoring Pipeline Working
   - Ensure baseline → scoring → alerting flow works
   - Manually test with sample data
   - Ask the user if questions arise
 
 - [ ] 7. Background Worker
-  - [ ] 7.1 Implement Worker Process
+  - [x] 7.1 Implement Worker Process
     - Create worker/index.ts with interval-based scheduler
     - Schedule baseline computation (every 5 minutes)
     - Schedule scoring run (every 5 minutes)
     - Schedule retention cleanup (daily)
     - _Requirements: 3.4, 12.2_
 
-  - [ ] 7.2 Implement Retention Cleanup
+  - [x] 7.2 Implement Retention Cleanup
     - Delete events older than retention period
     - Respect per-source retention overrides
     - Preserve baseline records
     - _Requirements: 12.1, 12.2, 12.3, 12.4_
 
-  - [ ] 7.3 Write property test for Retention
+  - [x] 7.3 Write property test for Retention
     - **Property 14: Retention Cleanup Preserves Baselines**
     - **Validates: Requirements 12.2, 12.3**
 
