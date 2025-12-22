@@ -14,7 +14,7 @@ import { prisma } from "@/lib/db";
 import { computeBaselineFromEvents, getSystemDefaults, ActorBaseline } from "@/lib/baseline";
 import { scoreActor, RiskScoreResult, formatRiskScore } from "@/lib/scoring";
 import { createAlertFromScore, evaluateAndAlert, getSeverityFromScore, isValidAlert } from "@/lib/alerting";
-import { Event, Outcome, ActorType } from "@/types";
+import { Event, Outcome, ActorType, Alert } from "@/types";
 
 // ============================================
 // Test Data Generation
@@ -252,8 +252,14 @@ async function testAlertGeneration(score: RiskScoreResult): Promise<void> {
   console.log(`  - Rule Contributions: ${alertData.ruleContributions.length}`);
   console.log(`  - Triggering Events: ${alertData.triggeringEventIds.length}`);
   
-  // Validate alert
-  const isValid = isValidAlert(alertData);
+  // Validate alert - convert AlertData to Alert-like structure for validation
+  const alertForValidation = {
+    ...alertData,
+    ruleContributions: alertData.ruleContributions as unknown as Alert["ruleContributions"],
+    baselineComparison: alertData.baselineComparison as unknown as Alert["baselineComparison"],
+    triggeringEventIds: alertData.triggeringEventIds as unknown as Alert["triggeringEventIds"],
+  };
+  const isValid = isValidAlert(alertForValidation);
   console.log(`\n✓ Alert validation: ${isValid ? "PASSED" : "FAILED"}`);
   
   // Test severity mapping

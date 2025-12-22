@@ -128,7 +128,7 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
   - Manually test with sample data
   - Ask the user if questions arise
 
-- [ ] 7. Background Worker
+- [x] 7. Background Worker
   - [x] 7.1 Implement Worker Process
     - Create worker/index.ts with interval-based scheduler
     - Schedule baseline computation (every 5 minutes)
@@ -146,29 +146,29 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
     - **Property 14: Retention Cleanup Preserves Baselines**
     - **Validates: Requirements 12.2, 12.3**
 
-- [ ] 8. Dashboard - Layout and Overview
-  - [ ] 8.1 Create Dashboard Layout
+- [x] 8. Dashboard - Layout and Overview
+  - [x] 8.1 Create Dashboard Layout
     - Create app/(dashboard)/layout.tsx with sidebar navigation
     - Add navigation links: Overview, Alerts, Actors, Rules, Sources, Audit
     - Add user menu with logout
     - _Requirements: 6.1_
 
-  - [ ] 8.2 Implement Overview Page
+  - [x] 8.2 Implement Overview Page
     - Create app/(dashboard)/page.tsx
     - Display alerts count today
     - Display high-risk actors list
     - Display simple trend chart (alerts per day, last 7 days)
     - _Requirements: 6.1, 6.2, 6.3, 6.4_
 
-- [ ] 9. Dashboard - Alerts Pages
-  - [ ] 9.1 Implement Alerts List Page
+- [x] 9. Dashboard - Alerts Pages
+  - [x] 9.1 Implement Alerts List Page
     - Create app/(dashboard)/alerts/page.tsx
     - Paginated table with: actor, score, severity, timestamp, status
     - Filters: severity, source, date range, status
     - Click to navigate to detail
     - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
-  - [ ] 9.2 Implement Alert Detail Page
+  - [x] 9.2 Implement Alert Detail Page
     - Create app/(dashboard)/alerts/[id]/page.tsx
     - Display score breakdown with rule contributions
     - Display baseline comparison table
@@ -176,29 +176,29 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
     - Status change buttons (acknowledge, resolve, false positive)
     - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
-- [ ] 10. Dashboard - Actors Pages
-  - [ ] 10.1 Implement Actors List Page
+- [x] 10. Dashboard - Actors Pages
+  - [x] 10.1 Implement Actors List Page
     - Create app/(dashboard)/actors/page.tsx
     - Table with: actorId, type, current risk score, last seen
     - Sort by risk score
     - _Requirements: 9.1_
 
-  - [ ] 10.2 Implement Actor Detail Page
+  - [x] 10.2 Implement Actor Detail Page
     - Create app/(dashboard)/actors/[id]/page.tsx
     - Event timeline (recent events)
     - Risk score history chart
     - Current baseline values display
     - _Requirements: 9.2, 9.3, 9.4_
 
-- [ ] 11. Dashboard - Admin Pages
-  - [ ] 11.1 Implement Rules Configuration Page
+- [x] 11. Dashboard - Admin Pages
+  - [x] 11.1 Implement Rules Configuration Page
     - Create app/(dashboard)/rules/page.tsx
     - List all rules with enable/disable toggle
     - Edit threshold and weight for each rule
     - Save changes and log to audit
     - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6_
 
-  - [ ] 11.2 Implement Sources Management Page
+  - [x] 11.2 Implement Sources Management Page
     - Create app/(dashboard)/sources/page.tsx
     - List sources with status
     - Create new source with API key generation
@@ -206,17 +206,17 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
     - Configure redaction and retention per source
     - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6_
 
-  - [ ] 11.3 Implement Audit Log Page
+  - [x] 11.3 Implement Audit Log Page
     - Create app/(dashboard)/audit/page.tsx
     - Display audit log entries with filters
     - Show: timestamp, user, action, entity, changes
     - _Requirements: 15.3_
 
-  - [ ] 11.4 Write property test for Audit Logging
+  - [x] 11.4 Write property test for Audit Logging
     - **Property 15: Audit Log Completeness**
     - **Validates: Requirements 15.1, 15.2**
 
-- [ ] 12. Checkpoint - Dashboard Complete
+- [x] 12. Checkpoint - Dashboard Complete
   - Ensure all pages render correctly
   - Test navigation and data display
   - Ask the user if questions arise
