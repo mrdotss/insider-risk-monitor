@@ -79,3 +79,17 @@ export interface RateLimitResult {
   remaining: number;
   resetAt: Date;
 }
+
+// Re-export baseline types
+export type {
+  ActorBaseline,
+  BaselineComputationResult,
+} from "@/lib/baseline";
+
+// Re-export scoring types
+export type {
+  ScoringRuleConfig,
+  RuleEvaluator,
+  RiskScoreResult,
+  ScoringOptions,
+} from "@/lib/scoring";

@@ -6,7 +6,7 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
 
 ## Tasks
 
-- [ ] 1. Project Setup and Infrastructure
+- [x] 1. Project Setup and Infrastructure
   - [x] 1.1 Initialize Next.js project with TypeScript and App Router
     - Run `npx create-next-app@latest` with TypeScript, Tailwind, App Router
     - Configure tsconfig.json for strict mode
@@ -31,7 +31,7 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
     - Seed default admin user
     - _Requirements: 13.1, 13.2, 13.3_
 
-- [ ] 2. Core Business Logic - Ingestion
+- [x] 2. Core Business Logic - Ingestion
   - [x] 2.1 Implement Source management
     - Create Source service with CRUD operations
     - Implement API key generation and hashing (bcrypt)
@@ -63,24 +63,24 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
     - **Property 3: Invalid Payload Returns Validation Error**
     - **Validates: Requirements 1.1, 1.2, 1.4, 1.5**
 
-- [ ] 3. Checkpoint - Ingestion Working
+- [x] 3. Checkpoint - Ingestion Working
   - Ensure ingestion API accepts events and stores them
   - Test with curl command
   - Ask the user if questions arise
 
 - [ ] 4. Core Business Logic - Baselines and Scoring
-  - [ ] 4.1 Implement Baseline Engine
+  - [x] 4.1 Implement Baseline Engine
     - Create computeBaseline function for single actor
     - Compute: typical hours, known IPs, avg bytes, resource scope, failure rate
     - Create computeAllBaselines for batch processing
     - Implement system defaults for new actors
     - _Requirements: 3.1, 3.2, 3.3, 3.5_
 
-  - [ ] 4.2 Write property test for Baseline computation
+  - [x] 4.2 Write property test for Baseline computation
     - **Property 6: Baseline Computation Produces Valid Record**
     - **Validates: Requirements 3.1, 3.2, 3.5**
 
-  - [ ] 4.3 Implement Scoring Rules
+  - [x] 4.3 Implement Scoring Rules
     - Create rule evaluators for each rule:
       - off_hours: Compare event hours to baseline typical hours
       - new_ip: Check if IP is in known IPs list
@@ -90,14 +90,14 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
     - Each rule returns RuleContribution with points and reason
     - _Requirements: 4.2_
 
-  - [ ] 4.4 Implement Scoring Engine
+  - [x] 4.4 Implement Scoring Engine
     - Create scoreActor function combining all rules
     - Sum rule contributions, cap at 100
     - Include baseline values in output
     - Track triggering event IDs
     - _Requirements: 4.1, 4.3, 4.4_
 
-  - [ ] 4.5 Write property tests for Scoring
+  - [x] 4.5 Write property tests for Scoring
     - **Property 7: Risk Score Range Invariant**
     - **Property 8: Score Includes Rule Contributions**
     - **Property 9: Scoring Determinism**
