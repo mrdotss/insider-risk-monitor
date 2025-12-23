@@ -264,7 +264,7 @@ This plan implements the Insider Risk Monitor MVP in incremental steps, building
     - Verify alert visible in API response
     - _Requirements: 14.4_
 
-- [ ] 16. Final Checkpoint
+- [x] 16. Final Checkpoint
   - Run `docker compose up` and verify system starts
   - Run demo data generator
   - Verify at least 2 alerts visible in dashboard

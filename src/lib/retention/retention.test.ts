@@ -326,8 +326,11 @@ describe("Retention - Property Tests", () => {
       fc.asyncProperty(
         // Generate random retention days (1-365)
         fc.integer({ min: 1, max: 365 }),
-        // Generate random reference date within reasonable range
-        fc.date({ min: new Date("2020-01-01"), max: new Date("2030-12-31") }),
+        // Generate random reference date using integer timestamps to avoid invalid dates
+        fc.integer({
+          min: new Date("2020-01-01").getTime(),
+          max: new Date("2030-12-31").getTime()
+        }).map(ts => new Date(ts)),
         async (retentionDays, referenceDate) => {
           const cutoff = calculateCutoffDate(retentionDays, referenceDate);
           

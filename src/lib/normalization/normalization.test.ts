@@ -90,6 +90,15 @@ const ipArbitrary = fc.tuple(
 const userAgentArbitrary = fc.stringMatching(/^[a-zA-Z0-9\/\.\s\(\);,-]{10,100}$/);
 
 /**
+ * Generate a valid timestamp as ISO string
+ * Uses integer-based date generation to avoid invalid date issues
+ */
+const validTimestampArbitrary = fc.integer({
+  min: new Date('2020-01-01').getTime(),
+  max: new Date('2030-01-01').getTime()
+}).map(ts => new Date(ts).toISOString());
+
+/**
  * Generate a valid raw event with all required fields
  * This ensures the raw event will successfully normalize
  */
@@ -99,8 +108,7 @@ const validRawEventArbitrary: fc.Arbitrary<RawEvent> = fc.record({
   // Required fields - at least one action type
   actionType: actionTypeArbitrary,
   // Required fields - timestamp
-  timestamp: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-01-01') })
-    .map(d => d.toISOString()),
+  timestamp: validTimestampArbitrary,
   // Optional fields
   actorType: fc.option(actorTypeArbitrary, { nil: undefined }),
   resourceType: fc.option(fc.stringMatching(/^[a-z_]{3,20}$/), { nil: undefined }),
@@ -120,8 +128,7 @@ const alternativeFieldRawEventArbitrary: fc.Arbitrary<RawEvent> = fc.oneof(
   fc.record({
     user: actorIdArbitrary,
     action: actionTypeArbitrary,
-    occurredAt: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-01-01') })
-      .map(d => d.toISOString()),
+    occurredAt: validTimestampArbitrary,
     success: fc.option(fc.boolean(), { nil: undefined }),
     ipAddress: fc.option(ipArbitrary, { nil: undefined }),
     bytesTransferred: fc.option(fc.integer({ min: 0, max: 1000000000 }), { nil: undefined }),
@@ -130,16 +137,14 @@ const alternativeFieldRawEventArbitrary: fc.Arbitrary<RawEvent> = fc.oneof(
   fc.record({
     userId: actorIdArbitrary,
     type: actionTypeArbitrary,
-    timestamp: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-01-01') })
-      .map(d => d.toISOString()),
+    timestamp: validTimestampArbitrary,
     resource: fc.option(fc.uuid(), { nil: undefined }),
   }),
   // Using 'actor' field
   fc.record({
     actor: actorIdArbitrary,
     actionType: actionTypeArbitrary,
-    timestamp: fc.date({ min: new Date('2020-01-01'), max: new Date('2030-01-01') })
-      .map(d => d.toISOString()),
+    timestamp: validTimestampArbitrary,
   })
 );
 

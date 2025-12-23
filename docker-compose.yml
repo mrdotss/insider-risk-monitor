@@ -5,6 +5,7 @@
 #   - web: Next.js application (dashboard + API)
 #   - worker: Background job processor
 #   - redis: Rate limiting cache
+#   - migrate: Database migrations (runs once)
 # ============================================
 # Usage:
 #   docker compose up              # Start all services
@@ -16,32 +17,30 @@
 
 services:
   # ============================================
-  # Web Service - Next.js Application
+  # Web Service - Next.js Application (~150MB)
   # ============================================
   web:
     build:
       context: .
       dockerfile: Dockerfile
+      target: runner
     container_name: insider-risk-web
     ports:
       - "3000:3000"
     environment:
-      # Database connection (Neon PostgreSQL)
       - DATABASE_URL=${DATABASE_URL}
-      # Authentication
       - AUTH_SECRET=${AUTH_SECRET}
       - AUTH_URL=http://localhost:3000
-      # Admin credentials
       - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@example.com}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-change-this-password}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
       - ADMIN_NAME=${ADMIN_NAME:-Admin User}
-      # Redis for rate limiting
       - REDIS_URL=redis://redis:6379
-      # Data retention
       - DATA_RETENTION_DAYS=${DATA_RETENTION_DAYS:-90}
     depends_on:
       redis:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
       interval: 30s
@@ -53,21 +52,17 @@ services:
       - insider-risk-network
 
   # ============================================
-  # Worker Service - Background Jobs
+  # Worker Service - Background Jobs (~200MB)
   # ============================================
   worker:
     build:
       context: .
       dockerfile: Dockerfile
+      target: worker
     container_name: insider-risk-worker
-    # Override the default command to run the worker
-    command: ["node", "-r", "tsx/cjs", "worker/index.ts"]
     environment:
-      # Database connection (Neon PostgreSQL)
       - DATABASE_URL=${DATABASE_URL}
-      # Redis for rate limiting
       - REDIS_URL=redis://redis:6379
-      # Worker configuration
       - BASELINE_INTERVAL_MS=${BASELINE_INTERVAL_MS:-300000}
       - SCORING_INTERVAL_MS=${SCORING_INTERVAL_MS:-300000}
       - RETENTION_INTERVAL_MS=${RETENTION_INTERVAL_MS:-86400000}
@@ -77,8 +72,8 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      web:
-        condition: service_started
+      migrate:
+        condition: service_completed_successfully
     restart: unless-stopped
     networks:
       - insider-risk-network
@@ -109,16 +104,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: migrate
     container_name: insider-risk-migrate
-    # Run Prisma migrations and seed
-    command: >
-      sh -c "
-        echo 'Running database migrations...' &&
-        npx prisma db push --skip-generate &&
-        echo 'Seeding database...' &&
-        npx tsx prisma/seed.ts &&
-        echo 'Migration and seeding complete!'
-      "
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@example.com}
@@ -131,16 +118,10 @@ services:
     networks:
       - insider-risk-network
 
-# ============================================
-# Networks
-# ============================================
 networks:
   insider-risk-network:
     driver: bridge
 
-# ============================================
-# Volumes
-# ============================================
 volumes:
   redis-data:
     driver: local
